@@ -15,6 +15,20 @@ const nextConfig: NextConfig = {
   // Configure base path if deploying to a subdirectory
   // basePath: '/your-repo-name', // Uncomment and update if needed
 
+  // Webpack configuration to handle server-side modules
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Exclude server-side modules from client bundle
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        path: false,
+        os: false,
+      };
+    }
+    return config;
+  },
+
   // Experimental features
   experimental: {
     // Enable optimized package imports

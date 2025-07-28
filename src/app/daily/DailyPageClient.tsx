@@ -1,40 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Calendar, Coffee, Code, BookOpen } from 'lucide-react';
+import { Calendar, Coffee, Code, BookOpen, ArrowRight, Clock } from 'lucide-react';
+import Link from 'next/link';
 import Container from '@/components/Container';
+import { DailyPostMeta } from '@/types/blog';
 
-interface DailyEntry {
-  date: string;
-  title: string;
-  content: string;
-  mood: 'productive' | 'learning' | 'challenging' | 'creative';
-  tags: string[];
+interface DailyPageClientProps {
+  dailyPosts: DailyPostMeta[];
 }
-
-const dailyEntries: DailyEntry[] = [
-  {
-    date: "2024-12-01",
-    title: "Launched My Personal Blog",
-    content: "Finally got my personal blog up and running! Built it with Next.js 15 and Tailwind CSS. The theme system with smooth transitions turned out really nice. Planning to write more about the development process.",
-    mood: "productive",
-    tags: ["Next.js", "Blog", "Launch"],
-  },
-  {
-    date: "2024-11-30",
-    title: "Deep Dive into React Server Components",
-    content: "Spent the day learning about React Server Components and how they work with Next.js App Router. The mental model shift is interesting - thinking about what runs on the server vs client.",
-    mood: "learning",
-    tags: ["React", "Server Components", "Learning"],
-  },
-  {
-    date: "2024-11-29",
-    title: "Debugging CSS Grid Issues",
-    content: "Had a tricky CSS Grid layout issue today. Turns out it was a simple misunderstanding of how grid-template-areas work. Sometimes the simplest bugs take the longest to find!",
-    mood: "challenging",
-    tags: ["CSS", "Grid", "Debugging"],
-  },
-];
 
 const moodIcons = {
   productive: Coffee,
@@ -50,7 +24,24 @@ const moodColors = {
   creative: 'text-purple-500',
 };
 
-export default function DailyPageClient() {
+const moodBgColors = {
+  productive: 'bg-green-500/10',
+  learning: 'bg-blue-500/10',
+  challenging: 'bg-orange-500/10',
+  creative: 'bg-purple-500/10',
+};
+
+// Client-side date formatting function
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+
+export default function DailyPageClient({ dailyPosts }: DailyPageClientProps) {
   return (
     <div className="py-12">
       <Container>
@@ -71,7 +62,7 @@ export default function DailyPageClient() {
             </p>
           </div>
 
-          {dailyEntries.length === 0 ? (
+          {dailyPosts.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg">
                 No daily entries yet. Check back soon for regular updates!
@@ -79,57 +70,70 @@ export default function DailyPageClient() {
             </div>
           ) : (
             <div className="space-y-8">
-              {dailyEntries.map((entry, index) => {
-                const MoodIcon = moodIcons[entry.mood];
+              {dailyPosts.map((post, index) => {
+                const MoodIcon = moodIcons[post.mood];
                 return (
                   <motion.article
-                    key={entry.date}
+                    key={post.slug}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-shadow duration-300"
+                    className="bg-card border border-border rounded-lg p-6 hover:shadow-md transition-all duration-300 group"
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0">
-                        <div className={`p-2 rounded-lg bg-muted ${moodColors[entry.mood]}`}>
-                          <MoodIcon className="w-5 h-5" />
+                        <div className={`p-2 rounded-lg ${moodBgColors[post.mood]}`}>
+                          <MoodIcon className={`w-5 h-5 ${moodColors[post.mood]}`} />
                         </div>
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <time 
-                            dateTime={entry.date}
+                          <time
+                            dateTime={post.date}
                             className="text-sm text-muted-foreground font-mono"
                           >
-                            {new Date(entry.date).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric'
-                            })}
+                            {formatDate(post.date)}
                           </time>
-                          <span className={`text-xs px-2 py-1 rounded-full bg-muted ${moodColors[entry.mood]} capitalize`}>
-                            {entry.mood}
+                          <span className={`text-xs px-2 py-1 rounded-full ${moodBgColors[post.mood]} ${moodColors[post.mood]} capitalize font-medium`}>
+                            {post.mood}
                           </span>
+                          {post.readingTime && (
+                            <div className="flex items-center text-xs text-muted-foreground">
+                              <Clock className="w-3 h-3 mr-1" />
+                              {post.readingTime} min
+                            </div>
+                          )}
                         </div>
-                        
-                        <h3 className="text-lg font-semibold text-foreground mb-3">
-                          {entry.title}
+
+                        <h3 className="text-lg font-semibold text-foreground mb-3 group-hover:text-primary transition-colors">
+                          <Link href={`/daily/${post.slug}`}>
+                            {post.title}
+                          </Link>
                         </h3>
-                        
+
                         <p className="text-muted-foreground mb-4 leading-relaxed">
-                          {entry.content}
+                          {post.excerpt}
                         </p>
-                        
-                        <div className="flex flex-wrap gap-2">
-                          {entry.tags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="text-xs px-2 py-1 bg-secondary text-secondary-foreground rounded-full"
-                            >
-                              {tag}
-                            </span>
-                          ))}
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex flex-wrap gap-2">
+                            {post.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="text-xs px-2 py-1 bg-secondary text-secondary-foreground rounded-full"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                          <Link
+                            href={`/daily/${post.slug}`}
+                            className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            Read more
+                            <ArrowRight className="w-3 h-3" />
+                          </Link>
                         </div>
                       </div>
                     </div>

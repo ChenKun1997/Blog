@@ -35,4 +35,8 @@ export const navigation: NavigationItem[] = [
     name: "Case Studies",
     href: "/case-studies",
   },
+  {
+    name: "Profile",
+    href: "/profile",
+  },
 ];

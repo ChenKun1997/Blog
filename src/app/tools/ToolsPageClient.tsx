@@ -1,43 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ExternalLink, Github, Wrench } from 'lucide-react';
+import { ExternalLink, Github, Wrench, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import Container from '@/components/Container';
+import { ToolMeta } from '@/types/blog';
 
-interface Tool {
-  name: string;
-  description: string;
-  url: string;
-  github?: string;
-  tags: string[];
-  featured?: boolean;
+interface ToolsPageClientProps {
+  tools: ToolMeta[];
 }
 
-const tools: Tool[] = [
-  {
-    name: "Code Snippet Manager",
-    description: "A simple tool to manage and organize your code snippets with syntax highlighting and search functionality.",
-    url: "https://example.com/snippet-manager",
-    github: "https://github.com/yourusername/snippet-manager",
-    tags: ["React", "TypeScript", "Productivity"],
-    featured: true,
-  },
-  {
-    name: "Color Palette Generator",
-    description: "Generate beautiful color palettes for your web projects with accessibility considerations.",
-    url: "https://example.com/color-palette",
-    github: "https://github.com/yourusername/color-palette",
-    tags: ["CSS", "Design", "Accessibility"],
-  },
-  {
-    name: "API Response Formatter",
-    description: "Format and beautify JSON API responses for better readability during development.",
-    url: "https://example.com/api-formatter",
-    tags: ["JSON", "API", "Development"],
-  },
-];
-
-export default function ToolsPageClient() {
+export default function ToolsPageClient({ tools }: ToolsPageClientProps) {
   return (
     <div className="py-12">
       <Container>
@@ -68,7 +41,7 @@ export default function ToolsPageClient() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {tools.map((tool, index) => (
                 <motion.div
-                  key={tool.name}
+                  key={tool.slug}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -83,7 +56,9 @@ export default function ToolsPageClient() {
                   )}
 
                   <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
-                    {tool.name}
+                    <Link href={`/tools/${tool.slug}`} className="hover:text-primary transition-colors">
+                      {tool.name}
+                    </Link>
                   </h3>
 
                   <p className="text-muted-foreground mb-4 line-clamp-3">
@@ -101,27 +76,38 @@ export default function ToolsPageClient() {
                     ))}
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    <a
-                      href={tool.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium transition-colors"
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {tool.demo && (
+                        <a
+                          href={tool.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium transition-colors"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                          Demo
+                        </a>
+                      )}
+                      {tool.github && (
+                        <a
+                          href={tool.github}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                          <Github className="w-4 h-4" />
+                          Source
+                        </a>
+                      )}
+                    </div>
+                    <Link
+                      href={`/tools/${tool.slug}`}
+                      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <ExternalLink className="w-4 h-4" />
-                      View Tool
-                    </a>
-                    {tool.github && (
-                      <a
-                        href={tool.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        <Github className="w-4 h-4" />
-                        Source
-                      </a>
-                    )}
+                      Learn more
+                      <ArrowRight className="w-3 h-3" />
+                    </Link>
                   </div>
                 </motion.div>
               ))}
