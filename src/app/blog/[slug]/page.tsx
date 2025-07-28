@@ -9,9 +9,9 @@ import { formatDate } from '@/lib/blog';
 import { siteConfig } from '@/config/site';
 
 interface BlogPostPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Generate static params for all blog posts
@@ -23,9 +23,10 @@ export function generateStaticParams() {
 }
 
 // Generate metadata for each blog post
-export function generateMetadata({ params }: BlogPostPageProps) {
-  const post = getPostBySlug(params.slug);
-  
+export async function generateMetadata({ params }: BlogPostPageProps) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+
   if (!post) {
     return {
       title: 'Post Not Found',
@@ -51,8 +52,9 @@ export function generateMetadata({ params }: BlogPostPageProps) {
   };
 }
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = getPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
 
   if (!post) {
     notFound();

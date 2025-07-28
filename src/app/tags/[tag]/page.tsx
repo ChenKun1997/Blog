@@ -3,9 +3,9 @@ import { getPostsByTag, getAllTags } from '@/lib/blog.server';
 import TagPageClient from './TagPageClient';
 
 interface TagPageProps {
-  params: {
+  params: Promise<{
     tag: string;
-  };
+  }>;
 }
 
 // Generate static params for all tags
@@ -16,8 +16,9 @@ export function generateStaticParams() {
   }));
 }
 
-export default function TagPage({ params }: TagPageProps) {
-  const decodedTag = decodeURIComponent(params.tag);
+export default async function TagPage({ params }: TagPageProps) {
+  const { tag } = await params;
+  const decodedTag = decodeURIComponent(tag);
   const posts = getPostsByTag(decodedTag);
 
   // Find the actual tag name with correct casing
