@@ -242,3 +242,27 @@ html {
     background-position: -200% 0;
   }
 }
+
+/* Giscus Comments Styling */
+.giscus-container {
+  /* 确保评论容器有足够的最小高度 */
+  min-height: 200px;
+}
+
+/* 自定义 Giscus 样式以匹配网站主题 */
+.giscus-frame {
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--border));
+}
+
+/* 在深色模式下调整 Giscus 的边框 */
+.dark .giscus-frame {
+  border-color: hsl(var(--border));
+}
+
+/* 确保评论区域在移动设备上的响应式显示 */
+@media (max-width: 768px) {
+  .giscus-container {
+    min-height: 150px;
+  }
+}

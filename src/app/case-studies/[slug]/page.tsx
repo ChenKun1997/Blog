@@ -3,6 +3,7 @@ import { ArrowLeft, Calendar, Clock, ExternalLink, Github, Globe } from 'lucide-
 import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Container from '@/components/Container';
+import Comments from '@/components/Comments';
 import { getCaseStudyBySlug, getAllCaseStudies, getRelatedCaseStudies } from '@/lib/case-studies.server';
 import { siteConfig } from '@/config/site';
 
@@ -220,6 +221,9 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
             </div>
           </section>
         )}
+
+        {/* Comments Section */}
+        <Comments className="mt-12" />
       </div>
     </Container>
   );

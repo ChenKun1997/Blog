@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Container from '@/components/Container';
 import TagBadge from '@/components/TagBadge';
+import Comments from '@/components/Comments';
 import { getPostBySlug, getAllPosts } from '@/lib/blog.server';
 import { formatDate } from '@/lib/blog';
 import { siteConfig } from '@/config/site';
@@ -122,6 +123,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </Link>
           </div>
         </footer>
+
+        {/* Comments Section */}
+        <Comments className="mt-12" />
       </Container>
     </article>
   );

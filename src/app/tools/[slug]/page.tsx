@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Container from '@/components/Container';
 import TagBadge from '@/components/TagBadge';
+import Comments from '@/components/Comments';
 import { getToolBySlug, getAllTools, getRelatedTools } from '@/lib/tools.server';
 import { siteConfig } from '@/config/site';
 
@@ -197,6 +198,9 @@ export default async function ToolPage({ params }: ToolPageProps) {
             </div>
           </section>
         )}
+
+        {/* Comments Section */}
+        <Comments className="mt-12" />
       </div>
     </Container>
   );

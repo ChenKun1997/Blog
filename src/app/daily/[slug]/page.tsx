@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import Container from '@/components/Container';
 import TagBadge from '@/components/TagBadge';
+import Comments from '@/components/Comments';
 import { getDailyPostBySlug, getAllDailyPosts, getAdjacentDailyPosts, formatDate } from '@/lib/daily.server';
 import { siteConfig } from '@/config/site';
 
@@ -210,6 +211,9 @@ export default async function DailyPage({ params }: DailyPageProps) {
             </div>
           </nav>
         )}
+
+        {/* Comments Section */}
+        <Comments className="mt-12" />
       </div>
     </Container>
   );
