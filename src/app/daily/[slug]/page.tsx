@@ -7,6 +7,7 @@ import TagBadge from '@/components/TagBadge';
 import Comments from '@/components/Comments';
 import { getDailyPostBySlug, getAllDailyPosts, getAdjacentDailyPosts, formatDate } from '@/lib/daily.server';
 import { siteConfig } from '@/config/site';
+import { mdxOptions, components } from '@/lib/mdx';
 
 interface DailyPageProps {
   params: Promise<{
@@ -148,7 +149,7 @@ export default async function DailyPage({ params }: DailyPageProps) {
 
         {/* Post Content */}
         <article className="prose prose-gray dark:prose-invert max-w-none mb-12">
-          <MDXRemote source={post.content} />
+          <MDXRemote source={post.content} options={mdxOptions} components={components} />
         </article>
 
         {/* Navigation */}

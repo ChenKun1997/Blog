@@ -8,6 +8,7 @@ import Comments from '@/components/Comments';
 import { getPostBySlug, getAllPosts } from '@/lib/blog.server';
 import { formatDate } from '@/lib/blog';
 import { siteConfig } from '@/config/site';
+import { mdxOptions, components } from '@/lib/mdx';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -104,7 +105,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Article content */}
         <div className="prose prose-lg dark:prose-invert max-w-none">
-          <MDXRemote source={post.content} />
+          <MDXRemote source={post.content} options={mdxOptions} components={components} />
         </div>
 
         {/* Article footer */}

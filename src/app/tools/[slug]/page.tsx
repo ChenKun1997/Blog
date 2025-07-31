@@ -7,6 +7,7 @@ import TagBadge from '@/components/TagBadge';
 import Comments from '@/components/Comments';
 import { getToolBySlug, getAllTools, getRelatedTools } from '@/lib/tools.server';
 import { siteConfig } from '@/config/site';
+import { mdxOptions, components } from '@/lib/mdx';
 
 interface ToolPageProps {
   params: Promise<{
@@ -161,7 +162,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
 
         {/* Tool Content */}
         <article className="prose prose-gray dark:prose-invert max-w-none mb-12">
-          <MDXRemote source={tool.content} />
+          <MDXRemote source={tool.content} options={mdxOptions} components={components} />
         </article>
 
         {/* Related Tools */}

@@ -6,6 +6,7 @@ import Container from '@/components/Container';
 import Comments from '@/components/Comments';
 import { getCaseStudyBySlug, getAllCaseStudies, getRelatedCaseStudies } from '@/lib/case-studies.server';
 import { siteConfig } from '@/config/site';
+import { mdxOptions, components } from '@/lib/mdx';
 
 interface CaseStudyPageProps {
   params: Promise<{
@@ -154,7 +155,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
         {/* Case Study Content */}
         <article className="prose prose-gray dark:prose-invert max-w-none mb-12">
-          <MDXRemote source={caseStudy.content} />
+          <MDXRemote source={caseStudy.content} options={mdxOptions} components={components} />
         </article>
 
         {/* Challenges and Outcomes */}

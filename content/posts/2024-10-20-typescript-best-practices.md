@@ -14,7 +14,7 @@ TypeScript has become an essential tool for building robust React applications. 
 
 Always define explicit interfaces for your component props:
 
-```typescript
+```typescript showLineNumbers
 interface ButtonProps {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'danger';
