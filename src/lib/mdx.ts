@@ -44,10 +44,8 @@ export const components = {
 
 // MDX options for next-mdx-remote/rsc
 export const mdxOptions = {
-  mdxOptions: {
-    remarkPlugins: [],
-    rehypePlugins: [
-      [rehypePrettyCode, rehypePrettyCodeOptions],
-    ],
-  },
+  remarkPlugins: [],
+  rehypePlugins: [
+    [rehypePrettyCode, rehypePrettyCodeOptions],
+  ],
 };

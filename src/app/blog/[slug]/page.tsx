@@ -1,14 +1,15 @@
-import { notFound } from 'next/navigation';
-import { Calendar, Clock, ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Container from '@/components/Container';
-import TagBadge from '@/components/TagBadge';
-import Comments from '@/components/Comments';
-import { getPostBySlug, getAllPosts } from '@/lib/blog.server';
-import { formatDate } from '@/lib/blog';
-import { siteConfig } from '@/config/site';
-import { mdxOptions, components } from '@/lib/mdx';
+import { notFound } from "next/navigation";
+import { Calendar, Clock, ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import { serialize } from "next-mdx-remote/serialize";
+import Container from "@/components/Container";
+import TagBadge from "@/components/TagBadge";
+import Comments from "@/components/Comments";
+import { getPostBySlug, getAllPosts } from "@/lib/blog.server";
+import { formatDate } from "@/lib/blog";
+import { siteConfig } from "@/config/site";
+import { mdxOptions, components } from "@/lib/mdx";
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
 
   if (!post) {
     return {
-      title: 'Post Not Found',
+      title: "Post Not Found",
     };
   }
 
@@ -41,13 +42,13 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      type: 'article',
+      type: "article",
       publishedTime: post.date,
       authors: [siteConfig.author.name],
       tags: post.tags,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: post.title,
       description: post.excerpt,
     },
@@ -57,10 +58,13 @@ export async function generateMetadata({ params }: BlogPostPageProps) {
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
+  console.log({ post });
 
   if (!post) {
     notFound();
   }
+
+  const source = await serialize(post.content);
 
   return (
     <article className="py-12">
@@ -79,13 +83,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4 leading-tight">
             {post.title}
           </h1>
-          
+
           <div className="flex flex-wrap items-center gap-4 text-muted-foreground mb-6">
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
-              <time dateTime={post.date}>
-                {formatDate(post.date)}
-              </time>
+              <time dateTime={post.date}>{formatDate(post.date)}</time>
             </div>
             {post.readingTime && (
               <div className="flex items-center gap-1">
@@ -105,7 +107,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Article content */}
         <div className="prose prose-lg dark:prose-invert max-w-none">
-          <MDXRemote source={post.content} options={mdxOptions} components={components} />
+          <MDXRemote
+            source={post.content}
+            options={{
+              mdxOptions:mdxOptions as any,
+            }}
+            components={components}
+          />
         </div>
 
         {/* Article footer */}

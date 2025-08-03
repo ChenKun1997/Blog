@@ -1,13 +1,24 @@
-import { notFound } from 'next/navigation';
-import { ArrowLeft, Calendar, Clock, ChevronLeft, ChevronRight } from 'lucide-react';
-import Link from 'next/link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Container from '@/components/Container';
-import TagBadge from '@/components/TagBadge';
-import Comments from '@/components/Comments';
-import { getDailyPostBySlug, getAllDailyPosts, getAdjacentDailyPosts, formatDate } from '@/lib/daily.server';
-import { siteConfig } from '@/config/site';
-import { mdxOptions, components } from '@/lib/mdx';
+import { notFound } from "next/navigation";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import Link from "next/link";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import Container from "@/components/Container";
+import TagBadge from "@/components/TagBadge";
+import Comments from "@/components/Comments";
+import {
+  getDailyPostBySlug,
+  getAllDailyPosts,
+  getAdjacentDailyPosts,
+  formatDate,
+} from "@/lib/daily.server";
+import { siteConfig } from "@/config/site";
+import { mdxOptions, components } from "@/lib/mdx";
 
 interface DailyPageProps {
   params: Promise<{
@@ -30,24 +41,24 @@ export async function generateMetadata({ params }: DailyPageProps) {
 
   if (!post) {
     return {
-      title: 'Daily Post Not Found',
+      title: "Daily Post Not Found",
     };
   }
 
   return {
     title: `${post.title} | Daily`,
-    description: post.content.substring(0, 160) + '...',
+    description: post.content.substring(0, 160) + "...",
     openGraph: {
       title: `${post.title} | Daily`,
-      description: post.content.substring(0, 160) + '...',
-      type: 'article',
+      description: post.content.substring(0, 160) + "...",
+      type: "article",
       url: `${siteConfig.siteUrl}/daily/${slug}`,
       publishedTime: post.date,
     },
     twitter: {
-      card: 'summary',
+      card: "summary",
       title: `${post.title} | Daily`,
-      description: post.content.substring(0, 160) + '...',
+      description: post.content.substring(0, 160) + "...",
     },
   };
 }
@@ -55,29 +66,29 @@ export async function generateMetadata({ params }: DailyPageProps) {
 // Mood icons and colors
 const moodConfig = {
   productive: {
-    icon: '☕',
-    color: 'text-green-500',
-    bgColor: 'bg-green-500/10',
-    label: 'Productive'
+    icon: "☕",
+    color: "text-green-500",
+    bgColor: "bg-green-500/10",
+    label: "Productive",
   },
   learning: {
-    icon: '📚',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-500/10',
-    label: 'Learning'
+    icon: "📚",
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/10",
+    label: "Learning",
   },
   challenging: {
-    icon: '💪',
-    color: 'text-orange-500',
-    bgColor: 'bg-orange-500/10',
-    label: 'Challenging'
+    icon: "💪",
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/10",
+    label: "Challenging",
   },
   creative: {
-    icon: '🎨',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-500/10',
-    label: 'Creative'
-  }
+    icon: "🎨",
+    color: "text-purple-500",
+    bgColor: "bg-purple-500/10",
+    label: "Creative",
+  },
 };
 
 export default async function DailyPage({ params }: DailyPageProps) {
@@ -115,9 +126,7 @@ export default async function DailyPage({ params }: DailyPageProps) {
             {/* Date */}
             <div className="flex items-center text-muted-foreground">
               <Calendar className="w-4 h-4 mr-2" />
-              <time dateTime={post.date}>
-                {formatDate(post.date)}
-              </time>
+              <time dateTime={post.date}>{formatDate(post.date)}</time>
             </div>
 
             {/* Reading Time */}
@@ -129,7 +138,9 @@ export default async function DailyPage({ params }: DailyPageProps) {
             )}
 
             {/* Mood */}
-            <div className={`flex items-center px-3 py-1 rounded-full ${mood.bgColor}`}>
+            <div
+              className={`flex items-center px-3 py-1 rounded-full ${mood.bgColor}`}
+            >
               <span className="mr-2">{mood.icon}</span>
               <span className={`text-sm font-medium ${mood.color}`}>
                 {mood.label}
@@ -149,7 +160,13 @@ export default async function DailyPage({ params }: DailyPageProps) {
 
         {/* Post Content */}
         <article className="prose prose-gray dark:prose-invert max-w-none mb-12">
-          <MDXRemote source={post.content} options={mdxOptions} components={components} />
+          <MDXRemote
+            source={post.content}
+            options={{
+              mdxOptions: mdxOptions as any,
+            }}
+            components={components}
+          />
         </article>
 
         {/* Navigation */}

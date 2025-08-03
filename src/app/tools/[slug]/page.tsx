@@ -1,13 +1,17 @@
-import { notFound } from 'next/navigation';
-import { ArrowLeft, ExternalLink, Github, Globe, Package } from 'lucide-react';
-import Link from 'next/link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Container from '@/components/Container';
-import TagBadge from '@/components/TagBadge';
-import Comments from '@/components/Comments';
-import { getToolBySlug, getAllTools, getRelatedTools } from '@/lib/tools.server';
-import { siteConfig } from '@/config/site';
-import { mdxOptions, components } from '@/lib/mdx';
+import { notFound } from "next/navigation";
+import { ArrowLeft, ExternalLink, Github, Globe, Package } from "lucide-react";
+import Link from "next/link";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import Container from "@/components/Container";
+import TagBadge from "@/components/TagBadge";
+import Comments from "@/components/Comments";
+import {
+  getToolBySlug,
+  getAllTools,
+  getRelatedTools,
+} from "@/lib/tools.server";
+import { siteConfig } from "@/config/site";
+import { mdxOptions, components } from "@/lib/mdx";
 
 interface ToolPageProps {
   params: Promise<{
@@ -30,7 +34,7 @@ export async function generateMetadata({ params }: ToolPageProps) {
 
   if (!tool) {
     return {
-      title: 'Tool Not Found',
+      title: "Tool Not Found",
     };
   }
 
@@ -40,11 +44,11 @@ export async function generateMetadata({ params }: ToolPageProps) {
     openGraph: {
       title: `${tool.name} | Tools`,
       description: tool.description,
-      type: 'article',
+      type: "article",
       url: `${siteConfig.siteUrl}/tools/${slug}`,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${tool.name} | Tools`,
       description: tool.description,
     },
@@ -162,7 +166,13 @@ export default async function ToolPage({ params }: ToolPageProps) {
 
         {/* Tool Content */}
         <article className="prose prose-gray dark:prose-invert max-w-none mb-12">
-          <MDXRemote source={tool.content} options={mdxOptions} components={components} />
+          <MDXRemote
+            source={tool.content}
+            options={{
+              mdxOptions: mdxOptions as any,
+            }}
+            components={components}
+          />
         </article>
 
         {/* Related Tools */}

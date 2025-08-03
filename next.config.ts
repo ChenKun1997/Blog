@@ -34,6 +34,7 @@ const nextConfig: NextConfig = {
     // Enable optimized package imports
     optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
+  transpilePackages: ['next-mdx-remote']
 };
 
 export default nextConfig;

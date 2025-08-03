@@ -1,12 +1,23 @@
-import { notFound } from 'next/navigation';
-import { ArrowLeft, Calendar, Clock, ExternalLink, Github, Globe } from 'lucide-react';
-import Link from 'next/link';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import Container from '@/components/Container';
-import Comments from '@/components/Comments';
-import { getCaseStudyBySlug, getAllCaseStudies, getRelatedCaseStudies } from '@/lib/case-studies.server';
-import { siteConfig } from '@/config/site';
-import { mdxOptions, components } from '@/lib/mdx';
+import { notFound } from "next/navigation";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  ExternalLink,
+  Github,
+  Globe,
+} from "lucide-react";
+import Link from "next/link";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import Container from "@/components/Container";
+import Comments from "@/components/Comments";
+import {
+  getCaseStudyBySlug,
+  getAllCaseStudies,
+  getRelatedCaseStudies,
+} from "@/lib/case-studies.server";
+import { siteConfig } from "@/config/site";
+import { mdxOptions, components } from "@/lib/mdx";
 
 interface CaseStudyPageProps {
   params: Promise<{
@@ -29,7 +40,7 @@ export async function generateMetadata({ params }: CaseStudyPageProps) {
 
   if (!caseStudy) {
     return {
-      title: 'Case Study Not Found',
+      title: "Case Study Not Found",
     };
   }
 
@@ -39,11 +50,11 @@ export async function generateMetadata({ params }: CaseStudyPageProps) {
     openGraph: {
       title: `${caseStudy.title} | Case Studies`,
       description: caseStudy.description,
-      type: 'article',
+      type: "article",
       url: `${siteConfig.siteUrl}/case-studies/${slug}`,
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${caseStudy.title} | Case Studies`,
       description: caseStudy.description,
     },
@@ -58,7 +69,10 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
     notFound();
   }
 
-  const relatedCaseStudies = getRelatedCaseStudies(caseStudy.slug, caseStudy.technologies);
+  const relatedCaseStudies = getRelatedCaseStudies(
+    caseStudy.slug,
+    caseStudy.technologies
+  );
 
   return (
     <Container>
@@ -139,7 +153,9 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
           {/* Technologies */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-foreground mb-3">Technologies Used</h3>
+            <h3 className="text-sm font-medium text-foreground mb-3">
+              Technologies Used
+            </h3>
             <div className="flex flex-wrap gap-2">
               {caseStudy.technologies.map((tech) => (
                 <span
@@ -155,7 +171,13 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
 
         {/* Case Study Content */}
         <article className="prose prose-gray dark:prose-invert max-w-none mb-12">
-          <MDXRemote source={caseStudy.content} options={mdxOptions} components={components} />
+          <MDXRemote
+            source={caseStudy.content}
+            options={{
+              mdxOptions: mdxOptions as any,
+            }}
+            components={components}
+          />
         </article>
 
         {/* Challenges and Outcomes */}
@@ -163,7 +185,9 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
           <div className="grid md:grid-cols-2 gap-8 mb-12 p-6 bg-card border border-border rounded-lg">
             {caseStudy.challenges.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Key Challenges</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  Key Challenges
+                </h3>
                 <ul className="space-y-3">
                   {caseStudy.challenges.map((challenge, index) => (
                     <li key={index} className="flex items-start gap-3">
@@ -174,10 +198,12 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
                 </ul>
               </div>
             )}
-            
+
             {caseStudy.outcomes.length > 0 && (
               <div>
-                <h3 className="text-lg font-semibold text-foreground mb-4">Outcomes & Results</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">
+                  Outcomes & Results
+                </h3>
                 <ul className="space-y-3">
                   {caseStudy.outcomes.map((outcome, index) => (
                     <li key={index} className="flex items-start gap-3">
