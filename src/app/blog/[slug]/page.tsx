@@ -110,7 +110,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <MDXRemote
             source={post.content}
             options={{
-              mdxOptions:mdxOptions as any,
+              mdxOptions: mdxOptions as any,
             }}
             components={components}
           />

@@ -2,10 +2,9 @@
 title: "Ai Chat Message Render Design"
 date: "2025-07-28"
 excerpt: "我们的 AI 聊天界面项目是一个基于 Next.js 的实时流式聊天系统，支持多种内容类型的动态渲染，包括 Markdown、图表、代码块、思维链等。"
-tags: ["ai", "chat",  "development"]
+tags: ["ai", "chat", "development"]
 featured: true
 ---
-
 
 ## 第一部分：项目背景与旧架构问题
 
@@ -102,7 +101,7 @@ class ContentRendererRegistry {
 ### 架构优势对比
 
 | 方面       | 旧架构       | 新架构          |
-|----------- | ------------| -------------- |
+| ---------- | ------------ | --------------- |
 | 添加新类型 | 修改核心文件 | 创建新组件+注册 |
 | 代码耦合度 | 高耦合       | 低耦合          |
 | 测试难度   | 集成测试     | 单元测试        |
