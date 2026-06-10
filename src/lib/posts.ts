@@ -1,5 +1,5 @@
-import matter from 'gray-matter'
 import { format, parseISO } from 'date-fns'
+import { parseFrontmatter } from './frontmatter'
 import type { BlogPost, BlogPostMeta, PostsByMonth } from '../types/blog'
 
 const postFiles = import.meta.glob('../../content/posts/*.md', {
@@ -19,7 +19,7 @@ function calculateReadingTime(content: string): number {
 }
 
 function parsePost(slug: string, raw: string): BlogPost {
-  const { data, content } = matter(raw)
+  const { data, content } = parseFrontmatter(raw)
 
   return {
     slug,
