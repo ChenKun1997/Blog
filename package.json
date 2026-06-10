@@ -10,8 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "date-fns": "^4.1.0",
+    "gray-matter": "^4.0.3",
     "react": "^19.2.4",
-    "react-dom": "^19.2.4"
+    "react-dom": "^19.2.4",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.6.3",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
