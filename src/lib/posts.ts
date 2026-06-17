@@ -1,6 +1,6 @@
 import { format, parseISO } from 'date-fns'
 import { parseFrontmatter } from './frontmatter'
-import type { BlogPost, BlogPostMeta, PostsByMonth } from '../types/blog'
+import type { BlogPost, BlogPostMeta, PostsByMonth, PostsByYear } from '../types/blog'
 
 const postFiles = import.meta.glob('../../content/posts/*.md', {
   eager: true,
@@ -95,9 +95,34 @@ export function getPostsByMonth(): PostsByMonth[] {
 }
 
 export function formatDate(dateString: string): string {
-  return format(parseISO(dateString), 'MMMM d, yyyy')
+  return format(parseISO(dateString), 'yyyy年M月d日')
 }
 
 export function formatDateShort(dateString: string): string {
-  return format(parseISO(dateString), 'MMM d, yyyy')
+  return format(parseISO(dateString), 'yyyy年M月d日')
+}
+
+export function formatDateCompact(dateString: string): string {
+  return format(parseISO(dateString), 'M月d日')
+}
+
+export function getPostsByYear(): PostsByYear[] {
+  const postsByYear: Record<number, BlogPostMeta[]> = {}
+
+  getAllPosts().forEach((post) => {
+    const year = parseISO(post.date).getFullYear()
+
+    if (!postsByYear[year]) {
+      postsByYear[year] = []
+    }
+
+    postsByYear[year].push(post)
+  })
+
+  return Object.entries(postsByYear)
+    .map(([year, posts]) => ({
+      year: Number.parseInt(year, 10),
+      posts,
+    }))
+    .sort((a, b) => b.year - a.year)
 }

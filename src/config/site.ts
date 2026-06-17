@@ -1,15 +1,14 @@
 export const siteConfig = {
-  name: "ChenKun's Blog",
-  description:
-    'A personal blog about web development, technology, and life as a developer.',
+  name: "陈坤的博客",
+  description: '一个关于 Web 开发、技术与开发者生活的个人博客。',
   author: {
-    name: 'ChenKun',
+    name: '陈坤',
     email: 'kunk97@163.com',
-    bio: 'Full-stack developer passionate about creating amazing web experiences. I love working with React, Next.js, and modern web technologies.',
+    bio: '全栈开发者，热衷于构建优秀的 Web 体验。主要使用 React、TypeScript 及现代 Web 技术。',
   },
   social: {
     github: 'https://github.com/ChenKun1997',
     email: 'kunk97@163.com',
   },
-  siteUrl: 'https://chenkun1997.github.io/Blog',
+  siteUrl: 'https://chenkun1997.github.io',
 }

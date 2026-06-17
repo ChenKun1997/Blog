@@ -24,3 +24,8 @@ export interface PostsByMonth {
   year: number
   posts: BlogPostMeta[]
 }
+
+export interface PostsByYear {
+  year: number
+  posts: BlogPostMeta[]
+}

@@ -1,36 +1,26 @@
-import BlogCard from '../components/BlogCard'
-import { getPostsByMonth } from '../lib/posts'
+import BlogPostItem from '../components/BlogPostItem'
+import { getPostsByYear } from '../lib/posts'
 
 export default function BlogPage() {
-  const postsByMonth = getPostsByMonth()
+  const postsByYear = getPostsByYear()
 
   return (
     <div className="container page">
-      <header className="page-header">
-        <h1>Blog</h1>
-        <p>
-          Thoughts, tutorials, and insights about web development and
-          technology.
-        </p>
-      </header>
+      <h1 className="page-title">博客</h1>
 
-      {postsByMonth.length === 0 ? (
-        <p className="empty-state">No posts yet. Check back soon!</p>
+      {postsByYear.length === 0 ? (
+        <p className="empty-state">暂无文章。</p>
       ) : (
-        <div className="month-groups">
-          {postsByMonth.map((group) => (
-            <section key={`${group.month}-${group.year}`} className="month-group">
-              <h2>
-                {group.month} {group.year}
-              </h2>
-              <div className="post-grid">
-                {group.posts.map((post) => (
-                  <BlogCard key={post.slug} post={post} />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
+        postsByYear.map((group) => (
+          <section key={group.year} className="year-group">
+            <h2 className="year-label">{group.year}</h2>
+            <ul className="post-list">
+              {group.posts.map((post) => (
+                <BlogPostItem key={post.slug} post={post} />
+              ))}
+            </ul>
+          </section>
+        ))
       )}
     </div>
   )

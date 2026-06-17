@@ -1,4 +1,5 @@
-import { Link, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
+import SignatureLogo from './SignatureLogo'
 import { siteConfig } from '../config/site'
 
 export default function Layout() {
@@ -6,12 +7,14 @@ export default function Layout() {
     <div className="layout">
       <header className="site-header">
         <div className="container header-inner">
-          <Link to="/" className="site-title">
-            {siteConfig.name}
+          <Link to="/" className="site-title" aria-label="Home">
+            <SignatureLogo width={140} />
           </Link>
           <nav className="site-nav">
-            <Link to="/">Home</Link>
-            <Link to="/blog">Blog</Link>
+            <NavLink to="/" end>
+              首页
+            </NavLink>
+            <NavLink to="/blog">博客</NavLink>
           </nav>
         </div>
       </header>
