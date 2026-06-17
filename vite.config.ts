@@ -15,6 +15,6 @@ function copy404Plugin(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/',
+  base: '/Blog/',
   plugins: [react(), copy404Plugin()],
 })

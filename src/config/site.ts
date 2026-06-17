@@ -10,5 +10,5 @@ export const siteConfig = {
     github: 'https://github.com/ChenKun1997',
     email: 'kunk97@163.com',
   },
-  siteUrl: 'https://chenkun1997.github.io',
+  siteUrl: 'https://chenkun1997.github.io/Blog',
 }
