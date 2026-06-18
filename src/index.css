@@ -20,6 +20,14 @@
     --link: #ededed;
     --code-bg: #171717;
   }
+
+  /* 暗色下提亮光晕,使其在深底上仍可见,色温偏冷 */
+  body::before {
+    background:
+      radial-gradient(45rem 45rem at 6% -6%, rgba(110, 150, 240, 0.18), transparent 60%),
+      radial-gradient(40rem 40rem at 96% 4%, rgba(170, 135, 235, 0.15), transparent 60%),
+      radial-gradient(48rem 48rem at 50% 112%, rgba(80, 200, 220, 0.13), transparent 62%);
+  }
 }
 
 *,
@@ -40,6 +48,19 @@ body {
   background: var(--background);
   color: var(--foreground);
   line-height: 1.75;
+}
+
+/* 背景:柔和的弥散光晕,静态、低饱和,不影响阅读 */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(45rem 45rem at 6% -6%, rgba(96, 130, 220, 0.12), transparent 60%),
+    radial-gradient(40rem 40rem at 96% 4%, rgba(150, 120, 220, 0.10), transparent 60%),
+    radial-gradient(48rem 48rem at 50% 112%, rgba(80, 190, 210, 0.08), transparent 62%);
 }
 
 a {
@@ -195,6 +216,7 @@ a:hover {
   justify-content: center;
   width: 2.5rem;
   height: 2.5rem;
+  font-size: 1.3rem;
   border-radius: 9999px;
   color: var(--foreground);
   text-decoration: none;
