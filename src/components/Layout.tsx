@@ -1,14 +1,15 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import SignatureLogo from './SignatureLogo'
+import SealLogo from './SealLogo'
 import { siteConfig } from '../config/site'
 
 export default function Layout() {
   return (
     <div className="layout">
       <header className="site-header">
-        <div className="container header-inner">
-          <Link to="/" className="site-title" aria-label="Home">
-            <SignatureLogo width={140} />
+        <div className="header-inner">
+          <Link to="/" className="site-title" aria-label="首页">
+            <SealLogo />
+            {/* <span className="site-name">{siteConfig.name}</span> */}
           </Link>
           <nav className="site-nav">
             <NavLink to="/" end>
