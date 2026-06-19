@@ -61,6 +61,56 @@ function getAllPosts() {
     .sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
+// ---------- 提示词元数据解析（Node 端独立实现，与 src/lib/prompts.ts 对称） ----------
+
+const PROMPT_CATEGORIES = ['text', 'image', 'video', 'coding']
+const CATEGORY_LABELS = {
+  text: '文生文',
+  image: '文生图',
+  video: '文生视频',
+  coding: 'Coding',
+}
+
+function parsePromptFrontmatter(raw) {
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/)
+  if (!match) return null
+  const block = match[1]
+  const get = (key) => {
+    const m = block.match(new RegExp(`^${key}:\\s*"(.*)"\\s*$`, 'm'))
+    return m ? m[1] : null
+  }
+  const modelsMatch = block.match(/^models:\s*(\[.*\])\s*$/m)
+  const featuredMatch = block.match(/^featured:\s*(true|false)\s*$/m)
+  const rawCategory = get('category')
+  const category =
+    rawCategory && PROMPT_CATEGORIES.includes(rawCategory) ? rawCategory : 'text'
+  return {
+    title: get('title') ?? '',
+    date: get('date') ?? '',
+    excerpt: get('excerpt') ?? '',
+    category,
+    categoryLabel: CATEGORY_LABELS[category],
+    models: modelsMatch ? JSON.parse(modelsMatch[1]) : [],
+    featured: featuredMatch ? featuredMatch[1] === 'true' : false,
+  }
+}
+
+function getAllPrompts() {
+  const dir = resolve(ROOT, 'content/prompts')
+  if (!existsSync(dir)) return []
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.md'))
+    .map((f) => {
+      const full = resolve(dir, f)
+      const raw = readFileSync(full, 'utf8')
+      const fm = parsePromptFrontmatter(raw)
+      if (!fm) return null
+      return { slug: getSlugFromPath(full), ...fm }
+    })
+    .filter(Boolean)
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+}
+
 // ---------- meta 注入工具 ----------
 
 function escapeHtml(s) {
@@ -150,6 +200,7 @@ function injectIntoTemplate(template, appHtml, headTags) {
 // ---------- 路由列表 ----------
 
 const posts = getAllPosts()
+const prompts = getAllPrompts()
 
 const routes = [
   {
@@ -181,6 +232,17 @@ const routes = [
       title: `全部文章 | ${SITE_NAME}`,
       description: `浏览${SITE_NAME}的全部文章，涵盖 React、TypeScript、前端工程化与 Web 开发实战。`,
       canonical: `${SITE_URL}/blog/`,
+      ogType: 'website',
+    },
+    jsonLd: null,
+  },
+  {
+    path: '/prompts/',
+    output: 'prompts/',
+    meta: {
+      title: `提示词库 | ${SITE_NAME}`,
+      description: `收录值得推荐的 AI 提示词，覆盖文生文、文生图、文生视频与 Coding 场景，可一键复制使用。`,
+      canonical: `${SITE_URL}/prompts/`,
       ogType: 'website',
     },
     jsonLd: null,
@@ -217,6 +279,40 @@ const routes = [
       keywords: post.tags.join(', '),
     },
   })),
+  ...prompts.map((prompt) => ({
+    path: `/prompts/${prompt.slug}/`,
+    output: `prompts/${prompt.slug}/`,
+    meta: {
+      title: `${prompt.title} | ${SITE_NAME}`,
+      description: `${prompt.excerpt}（${prompt.categoryLabel}${
+        prompt.models.length ? ' · ' + prompt.models.join('、') : ''
+      }）`,
+      canonical: `${SITE_URL}/prompts/${prompt.slug}/`,
+      ogType: 'article',
+      publishedTime: prompt.date,
+      keywords: [prompt.categoryLabel, ...prompt.models],
+    },
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: prompt.title,
+      description: prompt.excerpt,
+      datePublished: prompt.date,
+      dateModified: prompt.date,
+      image: OG_IMAGE,
+      author: {
+        '@type': 'Person',
+        name: '陈坤',
+        url: 'https://github.com/ChenKun1997',
+      },
+      publisher: { '@type': 'Person', name: '陈坤' },
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': `${SITE_URL}/prompts/${prompt.slug}/`,
+      },
+      keywords: [prompt.categoryLabel, ...prompt.models].join(', '),
+    },
+  })),
 ]
 
 // ---------- 主流程 ----------
@@ -251,7 +347,10 @@ async function main() {
     await writeFile(outFile, html, 'utf8')
 
     const post = posts.find((p) => `/blog/${p.slug}/` === route.path)
+    const prompt = prompts.find((p) => `/prompts/${p.slug}/` === route.path)
     if (post) lastmods.push({ url: route.meta.canonical, lastmod: post.date })
+    else if (prompt)
+      lastmods.push({ url: route.meta.canonical, lastmod: prompt.date })
     else lastmods.push({ url: route.meta.canonical, lastmod: null })
 
     console.log(`✓ 预渲染: ${route.path}`)
@@ -264,7 +363,7 @@ async function main() {
       (u) =>
         `  <url>\n    <loc>${u.url}</loc>${
           u.lastmod ? `\n    <lastmod>${u.lastmod}</lastmod>` : `\n    <lastmod>${today}</lastmod>`
-        }\n    <changefreq>${u.url.endsWith('/blog/') || u.url === `${SITE_URL}/` ? 'daily' : 'weekly'}</changefreq>\n  </url>`,
+        }\n    <changefreq>${u.url.endsWith('/blog/') || u.url.endsWith('/prompts/') || u.url === `${SITE_URL}/` ? 'daily' : 'weekly'}</changefreq>\n  </url>`,
     )
     .join('\n')
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`

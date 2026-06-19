@@ -3,6 +3,8 @@ import { Navigate, Route, Routes } from 'react-router'
 import Layout from './components/Layout'
 import BlogPage from './pages/BlogPage'
 import HomePage from './pages/HomePage'
+import PromptDetailPage from './pages/PromptDetailPage'
+import PromptsPage from './pages/PromptsPage'
 import PostPage from './pages/PostPage'
 
 /**
@@ -17,6 +19,8 @@ export function AppRoutes(): ReactNode {
         <Route index element={<HomePage />} />
         <Route path="blog" element={<BlogPage />} />
         <Route path="blog/:slug" element={<PostPage />} />
+        <Route path="prompts" element={<PromptsPage />} />
+        <Route path="prompts/:slug" element={<PromptDetailPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

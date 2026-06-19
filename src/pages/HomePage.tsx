@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom'
 import BlogPostItem from '../components/BlogPostItem'
+import CategoryBadge from '../components/CategoryBadge'
 import { EmailIcon, GitHubIcon } from '../components/SocialIcons'
 import { siteConfig } from '../config/site'
 import { getRecentPosts } from '../lib/posts'
+import { getRecentPrompts } from '../lib/prompts'
 
 export default function HomePage() {
   const recentPosts = getRecentPosts(5)
+  const recentPrompts = getRecentPrompts(4)
 
   return (
     <div className="container page">
@@ -54,6 +57,27 @@ export default function HomePage() {
             <ul className="post-list">
               {recentPosts.map((post) => (
                 <BlogPostItem key={post.slug} post={post} />
+              ))}
+            </ul>
+          </section>
+        </>
+      )}
+
+      {recentPrompts.length > 0 && (
+        <>
+          <hr className="divider" />
+          <section>
+            <p className="section-label">最新提示词</p>
+            <ul className="post-list">
+              {recentPrompts.map((prompt) => (
+                <li key={prompt.slug} className="post-item">
+                  <Link to={`/prompts/${prompt.slug}`}>
+                    <span className="post-item-title">{prompt.title}</span>
+                    <span className="post-item-meta">
+                      <CategoryBadge category={prompt.category} />
+                    </span>
+                  </Link>
+                </li>
               ))}
             </ul>
           </section>

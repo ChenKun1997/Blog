@@ -16,6 +16,7 @@ export default function Layout() {
               首页
             </NavLink>
             <NavLink to="/blog">博客</NavLink>
+            <NavLink to="/prompts">提示词</NavLink>
           </nav>
         </div>
       </header>

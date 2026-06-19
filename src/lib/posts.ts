@@ -34,7 +34,8 @@ function parsePost(slug: string, raw: string): BlogPost {
 }
 
 function toMeta(post: BlogPost): BlogPostMeta {
-  const { content: _, ...meta } = post
+  const { content, ...meta } = post
+  void content
   return meta
 }
 
