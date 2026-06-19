@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chenkun1997.github.io/Blog/sitemap.xml

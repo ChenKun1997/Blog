@@ -33,6 +33,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      # 移除预渲染所需的 SSR 中间产物，避免部署到 GitHub Pages
+      - name: Clean SSR build artifacts
+        run: rm -rf dist/server
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 

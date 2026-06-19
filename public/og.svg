@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <!-- 印章 -->
+  <rect x="540" y="120" width="120" height="120" rx="16" fill="#dc2626"/>
+  <text x="600" y="205" font-family="'Ma Shan Zheng', 'Songti SC', serif" font-size="92" fill="#ffffff" text-anchor="middle" font-weight="700">陈</text>
+  <text x="600" y="360" font-family="system-ui, -apple-system, 'PingFang SC', sans-serif" font-size="76" fill="#f8fafc" text-anchor="middle" font-weight="700">陈坤的博客</text>
+  <text x="600" y="430" font-family="system-ui, -apple-system, 'PingFang SC', sans-serif" font-size="34" fill="#94a3b8" text-anchor="middle">Web 开发 · React · TypeScript</text>
+  <text x="600" y="485" font-family="system-ui, -apple-system, 'PingFang SC', sans-serif" font-size="28" fill="#64748b" text-anchor="middle">前端工程化与技术分享</text>
+</svg>

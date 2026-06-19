@@ -10,9 +10,11 @@ export default function HomePage() {
   return (
     <div className="container page">
       <section className="intro">
+        <h1 className="page-title">{siteConfig.name}</h1>
         <p>{siteConfig.author.bio}</p>
         <p>
-          我在<Link to="/blog">博客</Link>上分享 Web 开发与技术相关的内容。
+          我在<Link to="/blog">博客</Link>上分享 Web 开发、React、TypeScript
+          与前端工程化的实践与思考。
         </p>
       </section>
 
