@@ -65,9 +65,9 @@ function getAllPosts() {
 
 const PROMPT_CATEGORIES = ['text', 'image', 'video', 'coding']
 const CATEGORY_LABELS = {
-  text: '文生文',
-  image: '文生图',
-  video: '文生视频',
+  text: 'text',
+  image: 'image',
+  video: 'video',
   coding: 'Coding',
 }
 
@@ -241,7 +241,7 @@ const routes = [
     output: 'prompts/',
     meta: {
       title: `提示词库 | ${SITE_NAME}`,
-      description: `收录值得推荐的 AI 提示词，覆盖文生文、文生图、文生视频与 Coding 场景，可一键复制使用。`,
+      description: `收录值得推荐的 AI 提示词，覆盖 text、image、video 与 Coding 场景，可一键复制使用。`,
       canonical: `${SITE_URL}/prompts/`,
       ogType: 'website',
     },

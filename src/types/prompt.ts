@@ -12,9 +12,9 @@ export type PromptCategory = (typeof PROMPT_CATEGORIES)[number]
 
 /** 类别 → 中文标签 + 图标标识（图标在 CategoryBadge 组件里映射） */
 export const CATEGORY_LABELS: Record<PromptCategory, string> = {
-  text: '文生文',
-  image: '文生图',
-  video: '文生视频',
+  text: 'text',
+  image: 'image',
+  video: 'video',
   coding: 'Coding',
 }
 

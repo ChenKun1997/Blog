@@ -11,22 +11,45 @@
   --header-max-width: 72rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+/* 主题机制：两态（亮/暗），支持手动切换 + 跟随系统。
+   - 手动选择：[data-theme='light'] / [data-theme='dark']，优先级最高
+   - 跟随系统：无 data-theme 或 data-theme='auto' 时，由下方 @media 决定
+   - index.html 的内联脚本会在首屏前根据 localStorage 设置 data-theme，防闪白 */
+
+/* 手动亮色：显式覆盖（即便系统是暗，也强制亮） */
+[data-theme='light'] {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --muted: #737373;
+  --border: #e5e5e5;
+  --link: #1a1a1a;
+  --code-bg: #f5f5f5;
+  color-scheme: light;
+}
+
+/* 暗色 token：手动暗色 与 系统暗色 共用同一套，通过 :where() 控制 specificity 相同，
+   便于复用。下面 [data-theme='dark'] 和 @media 各自引用。 */
+[data-theme='dark'] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --muted: #a3a3a3;
+  --border: #262626;
+  --link: #ededed;
+  --code-bg: #171717;
+  color-scheme: dark;
+}
+
+/* 跟随系统：仅当未手动指定（无 data-theme 属性，或值为 auto）时生效。
+   用 :where() 保持 0 specificity，确保手动 [data-theme] 能覆盖它。 */
+:where(:root:not([data-theme])) {
+  @media (prefers-color-scheme: dark) {
     --background: #0a0a0a;
     --foreground: #ededed;
     --muted: #a3a3a3;
     --border: #262626;
     --link: #ededed;
     --code-bg: #171717;
-  }
-
-  /* 暗色下提亮光晕,使其在深底上仍可见,色温偏冷 */
-  body::before {
-    background:
-      radial-gradient(45rem 45rem at 6% -6%, rgba(110, 150, 240, 0.18), transparent 60%),
-      radial-gradient(40rem 40rem at 96% 4%, rgba(170, 135, 235, 0.15), transparent 60%),
-      radial-gradient(48rem 48rem at 50% 112%, rgba(80, 200, 220, 0.13), transparent 62%);
+    color-scheme: dark;
   }
 }
 
@@ -61,6 +84,23 @@ body::before {
     radial-gradient(45rem 45rem at 6% -6%, rgba(96, 130, 220, 0.12), transparent 60%),
     radial-gradient(40rem 40rem at 96% 4%, rgba(150, 120, 220, 0.10), transparent 60%),
     radial-gradient(48rem 48rem at 50% 112%, rgba(80, 190, 210, 0.08), transparent 62%);
+}
+
+/* 暗色光晕：手动暗色 与 系统暗色 都提亮光晕,色温偏冷,使其在深底上仍可见 */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme])) body::before {
+    background:
+      radial-gradient(45rem 45rem at 6% -6%, rgba(110, 150, 240, 0.18), transparent 60%),
+      radial-gradient(40rem 40rem at 96% 4%, rgba(170, 135, 235, 0.15), transparent 60%),
+      radial-gradient(48rem 48rem at 50% 112%, rgba(80, 200, 220, 0.13), transparent 62%);
+  }
+}
+
+[data-theme='dark'] body::before {
+  background:
+    radial-gradient(45rem 45rem at 6% -6%, rgba(110, 150, 240, 0.18), transparent 60%),
+    radial-gradient(40rem 40rem at 96% 4%, rgba(170, 135, 235, 0.15), transparent 60%),
+    radial-gradient(48rem 48rem at 50% 112%, rgba(80, 200, 220, 0.13), transparent 62%);
 }
 
 a {
@@ -161,6 +201,88 @@ a:hover {
 .site-nav a:hover,
 .site-nav a.active {
   color: var(--foreground);
+}
+
+/* Header 右侧：导航 + 主题切换按钮水平排列 */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* 主题切换按钮：与社交图标风格统一，圆形、无边框 */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.theme-toggle:hover {
+  color: var(--foreground);
+  background: var(--code-bg);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+/* ===== 主题切换的圆形扩散过渡（View Transitions API）=====
+   原理：document.startViewTransition 会让浏览器对整页拍下新旧两张快照，
+   默认做 cross-fade。我们覆盖默认行为，改用 clip-path: circle() 让「新主题快照」
+   从点击坐标（--theme-x/--theme-y）向外圆形揭开，形成扩散动画。
+   圆心与半径由 useTheme 在点击时写入 :root。
+   不支持 View Transitions 的浏览器自动忽略这段 CSS，降级为普通切换。 */
+
+:root {
+  --theme-x: 50%;
+  --theme-y: 50%;
+  --theme-r: 100vmax;
+}
+
+/* 关键：禁用默认的 cross-fade，让新旧快照能叠在一起 */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* 旧快照在下层，保持满覆盖 */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+/* 新快照在上层，初始为 0 半径的圆，动画展开到覆盖整屏。
+   forwards 关键：动画结束后保持「整屏覆盖」终态，直到 transition 清理快照，
+   否则新快照会瞬间缩回初始的 circle(0) 露出旧快照，造成结尾闪烁。 */
+::view-transition-new(root) {
+  z-index: 9999;
+  clip-path: circle(0 at var(--theme-x) var(--theme-y));
+  animation: theme-reveal 0.55s ease-out forwards;
+}
+
+@keyframes theme-reveal {
+  to {
+    clip-path: circle(var(--theme-r) at var(--theme-x) var(--theme-y));
+  }
+}
+
+/* 尊重用户的减少动效偏好：禁用扩散，瞬时切换 */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    clip-path: none;
+  }
 }
 
 /* Main */
@@ -601,6 +723,14 @@ a:hover {
   align-items: center;
 }
 
+/* 详情页简介：meta 下方、正文上方的简短说明，比卡片摘要略大 */
+.prompt-detail-excerpt {
+  margin: -1rem 0 1.5rem;
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
 /* 提示词正文块：原样展示 + 浮动复制按钮 */
 
 .prompt-body {
@@ -665,6 +795,95 @@ a:hover {
 
 .site-footer p {
   margin: 0;
+}
+
+/* ===== 飘落的水墨汉字背景 ===== */
+/* 容器：固定铺满视口，置于所有内容之下，不响应指针事件 */
+.ink-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 单个汉字：默认位于视口上方之外，由动画驱动下落 */
+.ink-char {
+  position: absolute;
+  top: -3rem; /* 起始位于视口上方，配合负延迟立即有字符可见 */
+  color: var(--foreground);
+  /* 楷体字栈，与「陈」字印章保持一致 */
+  font-family: "Ma Shan Zheng", "STKaiti", "KaiTi", "楷体", "LXGW WenKai", cursive, serif;
+  font-weight: 400;
+  line-height: 1;
+  user-select: none;
+  /* 派生最终淡度：亮模式直接用原始值；暗模式在媒体查询里覆盖为 ×0.6。
+     inline 注入的是 --ink-opacity-raw（0.04~0.085）。 */
+  --ink-opacity: var(--ink-opacity-raw, 0.06);
+  /* 两个动画叠加：ink-fall 驱动位移，ink-fade 驱动淡入淡出。
+     ink-fade 的峰值引用 --ink-opacity，避免把透明度拉满到 1。 */
+  animation: ink-fall linear infinite, ink-fade ease-in-out infinite;
+  animation-duration: var(--dur, 50s), var(--dur, 50s);
+  animation-delay: var(--delay, 0s), var(--delay, 0s);
+  will-change: transform, opacity;
+}
+
+/* 位移：从视口上方落到视口下方之外 */
+@keyframes ink-fall {
+  0% {
+    transform: translate3d(0, -3rem, 0);
+  }
+  100% {
+    transform: translate3d(var(--drift, 0px), 105vh, 0);
+  }
+}
+
+/* 淡入淡出：峰值是 --ink-opacity（淡度），而非 1，避免覆盖成全不透明。
+   字符在视口中间段最清晰，进出边缘时渐隐。 */
+@keyframes ink-fade {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: var(--ink-opacity, 0.06);
+  }
+  85% {
+    opacity: var(--ink-opacity, 0.06);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* 暗色下双重压制：颜色压暗 + 透明度按比例衰减（×0.6）。
+   纯黑底上白字极显眼，需比亮模式更克制，否则会干扰阅读。
+   手动暗色 与 系统暗色 均生效。 */
+@media (prefers-color-scheme: dark) {
+  :where(:root:not([data-theme])) .ink-char {
+    color: #c8c8c8;
+    --ink-opacity: calc(var(--ink-opacity-raw, 0.06) * 0.6);
+  }
+}
+
+[data-theme='dark'] .ink-char {
+  color: #c8c8c8;
+  --ink-opacity: calc(var(--ink-opacity-raw, 0.06) * 0.6);
+}
+
+/* reduced-motion：降级为静止的暗纹水印，不再下落 */
+@media (prefers-reduced-motion: reduce) {
+  .ink-char {
+    animation: none;
+    /* 沿用 random 的 left/opacity，但固定在视口中段，作为静态水印 */
+    top: 20vh;
+  }
+}
+
+/* 动画关闭（data-motion="off"）时：客户端已检测到用户偏好减少动效，
+   同样降级为静态。这里用属性选择器二次保险，覆盖 keyframes 行为 */
+.ink-bg[data-motion='off'] .ink-char {
+  animation: none;
+  top: 20vh;
 }
 
 /* ===== Responsive ===== */

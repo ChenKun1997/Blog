@@ -38,6 +38,10 @@ export default function PromptDetailPage() {
         </div>
       </header>
 
+      {prompt.excerpt && (
+        <p className="prompt-detail-excerpt">{prompt.excerpt}</p>
+      )}
+
       <div className="prompt-body">
         <CopyButton text={prompt.content} />
         <pre>{prompt.content}</pre>

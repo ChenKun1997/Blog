@@ -21,6 +21,24 @@
     />
     <!-- title 与 og/canonical 占位：预渲染脚本（scripts/prerender.mjs）会按路由替换 -->
     <title>陈坤的博客</title>
+    <!-- 防闪白：在任何样式/脚本加载前，根据用户偏好提前设置 data-theme，
+         避免暗色用户刷新瞬间看到一帧白屏。两态逻辑：有记录用手动值，否则跟随系统。 -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme')
+          var theme =
+            saved === 'light' || saved === 'dark'
+              ? saved
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.setAttribute('data-theme', theme)
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light')
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

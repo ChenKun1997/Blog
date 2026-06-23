@@ -30,7 +30,7 @@ export default function PromptsPage() {
     <div className="container page">
       <h1 className="page-title">提示词</h1>
       <p className="prompts-intro">
-        收录我日常使用、值得推荐的提示词，覆盖文生文、文生图、文生视频与
+        收录我日常使用、值得推荐的提示词，覆盖 text、image、video 与
         Coding 场景。点击卡片查看完整内容，可一键复制使用。
       </p>
 
