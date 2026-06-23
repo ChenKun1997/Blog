@@ -236,11 +236,12 @@ a:hover {
   outline-offset: 2px;
 }
 
-/* ===== 主题切换的圆形扩散过渡（View Transitions API）=====
-   原理：document.startViewTransition 会让浏览器对整页拍下新旧两张快照，
-   默认做 cross-fade。我们覆盖默认行为，改用 clip-path: circle() 让「新主题快照」
-   从点击坐标（--theme-x/--theme-y）向外圆形揭开，形成扩散动画。
-   圆心与半径由 useTheme 在点击时写入 :root。
+/* ===== 主题切换的圆形扩散/收缩过渡（View Transitions API）=====
+   原理：document.startViewTransition 让浏览器对整页拍新旧两张快照。
+   我们用 clip-path: circle() 控制哪张快照可见，做出方向感不同的动画：
+     暗→亮（theme-to-light）：新快照（亮）从按钮处向外扩散，像日出
+     亮→暗（theme-to-dark）：旧快照（亮）向按钮处收缩消失，像日落
+   圆心 --theme-x/--theme-y 与半径 --theme-r 由 useTheme 在点击时写入 :root。
    不支持 View Transitions 的浏览器自动忽略这段 CSS，降级为普通切换。 */
 
 :root {
@@ -249,25 +250,38 @@ a:hover {
   --theme-r: 100vmax;
 }
 
-/* 关键：禁用默认的 cross-fade，让新旧快照能叠在一起 */
+/* 禁用默认的 cross-fade，让新旧快照能叠在一起由 clip-path 控制 */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-/* 旧快照在下层，保持满覆盖 */
-::view-transition-old(root) {
+/* ---- 暗→亮：日出扩散 ----
+   新快照（亮）在上层，从 0 半径圆扩到覆盖整屏；旧快照（暗）在下层静止。
+   forwards：动画结束保持整屏覆盖终态，避免新快照缩回露出旧快照而闪烁。 */
+.theme-to-light::view-transition-old(root) {
   z-index: 1;
 }
 
-/* 新快照在上层，初始为 0 半径的圆，动画展开到覆盖整屏。
-   forwards 关键：动画结束后保持「整屏覆盖」终态，直到 transition 清理快照，
-   否则新快照会瞬间缩回初始的 circle(0) 露出旧快照，造成结尾闪烁。 */
-::view-transition-new(root) {
+.theme-to-light::view-transition-new(root) {
   z-index: 9999;
   clip-path: circle(0 at var(--theme-x) var(--theme-y));
   animation: theme-reveal 0.55s ease-out forwards;
+}
+
+/* ---- 亮→暗：日落收缩 ----
+   旧快照（亮）跑到上层，从覆盖整屏收缩到按钮处（0 半径）消失；
+   新快照（暗）在下层满覆盖，随旧快照收缩逐渐露出。
+   forwards：动画结束保持「收缩为 0」终态，直到 transition 清理快照。 */
+.theme-to-dark::view-transition-old(root) {
+  z-index: 9999;
+  clip-path: circle(var(--theme-r) at var(--theme-x) var(--theme-y));
+  animation: theme-contract 0.55s ease-in forwards;
+}
+
+.theme-to-dark::view-transition-new(root) {
+  z-index: 1;
 }
 
 @keyframes theme-reveal {
@@ -276,7 +290,13 @@ a:hover {
   }
 }
 
-/* 尊重用户的减少动效偏好：禁用扩散，瞬时切换 */
+@keyframes theme-contract {
+  to {
+    clip-path: circle(0 at var(--theme-x) var(--theme-y));
+  }
+}
+
+/* 尊重用户的减少动效偏好：禁用扩散/收缩，瞬时切换 */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {

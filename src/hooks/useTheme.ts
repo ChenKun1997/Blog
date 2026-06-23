@@ -86,10 +86,18 @@ export function useTheme() {
       root.style.setProperty('--theme-y', `${y}px`)
       root.style.setProperty('--theme-r', `${endRadius}px`)
 
+      // 标记切换方向，供 CSS 选择不同的动画：
+      //   暗→亮：新快照（亮）从按钮处扩散，像日出
+      //   亮→暗：旧快照（亮）收缩进按钮，像日落（光被吸走）
+      const dirClass =
+        next === 'dark' ? 'theme-to-dark' : 'theme-to-light'
+      root.classList.remove('theme-to-dark', 'theme-to-light')
+      root.classList.add(dirClass)
+
       // startViewTransition 的回调内同步修改 DOM，浏览器据此拍新旧快照
       const transition = doc.startViewTransition(apply)
       transition.finished.finally(() => {
-        root.classList.remove('theme-transitioning')
+        root.classList.remove(dirClass)
       })
     },
     [theme, applyTheme],
