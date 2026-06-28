@@ -62,8 +62,7 @@ function prerenderPlugin(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  // 本地开发用根路径（访问 http://localhost:5173/ 即可），
-  // 生产构建用 /Blog/ 子路径以适配 GitHub Pages 项目页面。
-  base: process.env.NODE_ENV === 'production' ? '/Blog/' : '/',
+  // 绑定自定义域名后，GitHub Pages 以根路径提供服务，本地/生产统一用根路径。
+  base: '/',
   plugins: [react(), prerenderPlugin(), copy404Plugin()],
 })

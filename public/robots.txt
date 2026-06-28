@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://chenkun1997.github.io/Blog/sitemap.xml
+Sitemap: https://blog.octkun.site/sitemap.xml

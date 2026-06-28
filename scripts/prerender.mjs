@@ -122,13 +122,13 @@ function escapeHtml(s) {
 }
 
 // 与 src/config/site.ts 保持一致
-const SITE_URL = 'https://chenkun1997.github.io/Blog'
+const SITE_URL = 'https://blog.octkun.site'
 const OG_IMAGE = `${SITE_URL}/og.svg`
 const SITE_NAME = '陈坤的博客'
 const SITE_DESC =
   '一个关于 Web 开发、技术与开发者生活的个人博客。聚焦 React、TypeScript 及现代 Web 开发，分享前端工程化、组件设计与实战经验。'
 // 生产环境的 base 路径，须与 vite.config.ts 的 base 及 entry-server 的 basename 一致。
-const PROD_BASENAME = '/Blog'
+const PROD_BASENAME = ''
 
 function buildHeadTags({ path, meta, jsonLd }) {
   const title = meta.title
